@@ -1,0 +1,5 @@
+What size variable int?;32 bit;8 bit;32 bit;64 bit
+What size variable long?;64 bit;8 bit;32 bit;64 bit
+How the abbreviation stands for IoC?;Inversion of Control;Implements of Control;Inversion of Control;Inversion of Context
+Variable default short?;0;0.0;null;0
+Variable default String?;null;"""""";null;none

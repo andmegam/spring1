@@ -7,7 +7,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class QuestionDaoImpl implements IQuestionDao {
+public class QuestionDaoImpl implements QuestionDao {
 
     private final String fileName;
 
@@ -16,12 +16,12 @@ public class QuestionDaoImpl implements IQuestionDao {
     }
 
     @Override
-    public Question findOneQuestion(int index){
+    public Question findOneQuestion(int index) {
         String question = "";
         String correctAnswer = "";
         ArrayList<String> answers = new ArrayList<>();
 
-        File file = new File("src/main/resources/"+fileName);
+        File file = new File("src/main/resources/" + fileName);
         try (CSVReader csvReader = new CSVReader(new FileReader(file), ';', '"', 0)) {
             String[] nextLine;
             int i = 0;

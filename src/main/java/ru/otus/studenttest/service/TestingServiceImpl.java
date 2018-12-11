@@ -1,17 +1,24 @@
 package ru.otus.studenttest.service;
 
+import org.springframework.context.MessageSource;
 import ru.otus.studenttest.domain.Question;
 
+import java.util.Locale;
 import java.util.Scanner;
 
-public class TestingServiceImpl implements ITestingService {
+public class TestingServiceImpl implements TestingService {
 
-    private IQuestionService qService;
-    private IPersonService pService;
+    private final MessageSource messageSource;
+    private final Locale local;
+    private QuestionService qService;
+    private PersonService pService;
 
-    public TestingServiceImpl(IQuestionService qService, IPersonService pService) {
+
+    public TestingServiceImpl(QuestionService qService, PersonService pService, MessageSource messageSource, Locale local) {
         this.qService = qService;
         this.pService = pService;
+        this.messageSource = messageSource;
+        this.local = local;
     }
 
     @Override
@@ -23,8 +30,9 @@ public class TestingServiceImpl implements ITestingService {
 
         for (int i = 0; i < 5; i++) {
             Question question = qService.getOneQuestion(i);
-            System.out.printf("Вопрос №%d: %s %n", i + 1, question.getQuestion());
-            printMessage("Варианты ответов: ");
+            System.out.print(messageSource.getMessage("testing.question", null, local));
+            System.out.printf(" №%d: %s %n", i + 1, question.getQuestion());
+            System.out.println(messageSource.getMessage("testing.answers", null, local).concat(":"));
             int j = 1;
             for (String s : question.getAnswers()) {
                 System.out.printf("%d) %s %n", j, s);
@@ -32,23 +40,19 @@ public class TestingServiceImpl implements ITestingService {
             }
 
             do {
-                printMessage("Введите номер ответа: ");
+                System.out.println(messageSource.getMessage("user.answer", null, local));
                 userAnswer = scanner.nextLine().trim();
 
                 if (userAnswer.matches("[-+]?\\d+")) {
                     userAnswerNum = Integer.valueOf(userAnswer);
                 } else {
                     userAnswerNum = -1;
-                    printMessage("Необходимо ввести число от 1 до 3");
+                    System.out.println(messageSource.getMessage("testing.exception1", null, local));
                 }
-            } while ((userAnswerNum < 1) || (userAnswerNum > 4));
+            } while ((userAnswerNum < 1) || (userAnswerNum > 3));
             if (question.getAnswers().get(userAnswerNum - 1).equals(question.getCorrectAnswer()))
                 countCorrectAnswer++;
         }
         pService.getStudent().setCountCorrectAnswer(countCorrectAnswer);
-    }
-
-    private void printMessage(String msg) {
-        System.out.println(msg);
     }
 }
