@@ -25,8 +25,10 @@ public class AppConfig {
     }
 
     @Bean
-    QuestionDao questionDao(@Value("${csvfile.url}") String fileName, @Value("${local}") Locale local) {
-        return new QuestionDaoImpl(fileName, local);
+    QuestionDao questionDao(MessageSource messageSource, @Value("${local}") Locale local) {
+        local = Locale.getDefault().toString().isEmpty() ? local : Locale.getDefault();
+        String fileName = messageSource.getMessage("csvfile.url", null, local);
+        return new QuestionDaoImpl(fileName);
     }
 
     @Bean

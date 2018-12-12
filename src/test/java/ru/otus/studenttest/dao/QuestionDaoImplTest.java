@@ -7,7 +7,6 @@ import ru.otus.studenttest.domain.Question;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Locale;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,11 +19,11 @@ public class QuestionDaoImplTest {
 
     @BeforeEach
     public void setUp() {
+
         try (FileInputStream fileInputStream = new FileInputStream(PATH_TO_PROPERTIES)) {
             prop.load(fileInputStream);
-            String testFileName = prop.getProperty("csvfile.url");
-            String local = prop.getProperty("local");
-            questionDao = new QuestionDaoImpl(testFileName, Locale.forLanguageTag(local));
+            String fileName = prop.getProperty("csvfile.url");
+            questionDao = new QuestionDaoImpl(fileName);
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,26 +1,18 @@
 package ru.otus.studenttest.dao;
 
-import org.springframework.cglib.core.Local;
 import ru.otus.studenttest.domain.Question;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Locale;
-
 
 public class QuestionDaoImpl implements QuestionDao {
 
-    private String fileNameLocal;
+    private final String fileName;
 
-    public QuestionDaoImpl(String fileName, Locale local) {
-        setFile(fileName, local);
-    }
-
-    private void setFile(String fileName, Locale local) {
-        String f = Locale.getDefault().toString().isEmpty() ? "ru_RU" : Locale.getDefault().toString() ;
-        this.fileNameLocal = fileName.concat("_").concat(f).concat(".csv");
+    public QuestionDaoImpl(String fileName) {
+        this.fileName = fileName;
     }
 
     @Override
@@ -29,7 +21,7 @@ public class QuestionDaoImpl implements QuestionDao {
         String correctAnswer = "";
         ArrayList<String> answers = new ArrayList<>();
 
-        InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream(fileNameLocal);
+        InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream(fileName);
         int i = 0;
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))) {
             for (String line; (line = reader.readLine()) != null; ) {

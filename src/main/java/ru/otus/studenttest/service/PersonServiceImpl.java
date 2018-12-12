@@ -13,20 +13,21 @@ public class PersonServiceImpl implements PersonService {
 
 
     public PersonServiceImpl(MessageSource messageSource, Locale local) {
+        //System.out.println(Locale.getDefault().toString());
         this.messageSource = messageSource;
-        this.local = local;
+        this.local = Locale.getDefault().toString().isEmpty() ? local : Locale.getDefault();
     }
 
     @Override
     public void fillStudent() {
         Scanner scanner = new Scanner(System.in);
 
-        printMessage("user.family", true);
+        System.out.println(messageSource.getMessage("user.family", null, local));
         String userFamily = scanner.nextLine();
-        printMessage("user.name", true);
+        System.out.println(messageSource.getMessage("user.name", null, local));
         String userName = scanner.nextLine();
         student = new Person(userFamily, userName);
-        printMessage("user.hello", false);
+        System.out.print(messageSource.getMessage("user.hello", null, local));
         System.out.println(", " + student.getStudent());
     }
 
@@ -38,16 +39,10 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     public void testResult() {
-        printMessage("user.student", false);
+        System.out.print(messageSource.getMessage("user.student", null, local));
         System.out.println(": " + student.getStudent());
-        printMessage("user.result", false);
+        System.out.print(messageSource.getMessage("user.result", null, local));
         System.out.println(": " + student.getCountCorrectAnswer());
-    }
-
-    private void printMessage(String mes, boolean newLine) {
-        System.out.print(messageSource.getMessage(mes, null, local));
-        if (newLine)
-            System.out.println();
     }
 
 }

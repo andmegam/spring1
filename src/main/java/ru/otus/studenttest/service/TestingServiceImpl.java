@@ -18,7 +18,7 @@ public class TestingServiceImpl implements TestingService {
         this.qService = qService;
         this.pService = pService;
         this.messageSource = messageSource;
-        this.local = local;
+        this.local = Locale.getDefault().toString().isEmpty() ? local : Locale.getDefault();
     }
 
     @Override
