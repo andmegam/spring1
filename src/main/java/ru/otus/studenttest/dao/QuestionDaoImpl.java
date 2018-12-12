@@ -1,18 +1,26 @@
 package ru.otus.studenttest.dao;
 
-import au.com.bytecode.opencsv.CSVReader;
+import org.springframework.cglib.core.Local;
 import ru.otus.studenttest.domain.Question;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
+
 
 public class QuestionDaoImpl implements QuestionDao {
 
-    private final String fileName;
+    private String fileNameLocal;
 
-    public QuestionDaoImpl(String fileName) {
-        this.fileName = fileName;
+    public QuestionDaoImpl(String fileName, Locale local) {
+        setFile(fileName, local);
+    }
+
+    private void setFile(String fileName, Locale local) {
+        String f = Locale.getDefault().toString().isEmpty() ? "ru_RU" : Locale.getDefault().toString() ;
+        this.fileNameLocal = fileName.concat("_").concat(f).concat(".csv");
     }
 
     @Override
@@ -21,15 +29,19 @@ public class QuestionDaoImpl implements QuestionDao {
         String correctAnswer = "";
         ArrayList<String> answers = new ArrayList<>();
 
-        File file = new File("src/main/resources/" + fileName);
-        try (CSVReader csvReader = new CSVReader(new FileReader(file), ';', '"', 0)) {
-            String[] nextLine;
-            int i = 0;
-            while ((nextLine = csvReader.readNext()) != null) {
+        InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream(fileNameLocal);
+        int i = 0;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))) {
+            for (String line; (line = reader.readLine()) != null; ) {
+                String[] questionParts = line.split(";");
+                if (questionParts.length < 3) {
+                    continue;
+                }
                 if (i == index) {
-                    question = nextLine[0];
-                    correctAnswer = nextLine[1];
-                    answers.addAll(Arrays.asList(nextLine[2], nextLine[3], nextLine[4]));
+                    question = questionParts[0];
+                    correctAnswer = questionParts[1];
+                    answers.addAll(Arrays.asList(questionParts[2], questionParts[3], questionParts[4]));
+                    break;
                 }
                 i++;
             }

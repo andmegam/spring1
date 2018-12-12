@@ -25,8 +25,8 @@ public class AppConfig {
     }
 
     @Bean
-    QuestionDao questionDao(@Value("${csvfile.url}") String fileName) {
-        return new QuestionDaoImpl(fileName);
+    QuestionDao questionDao(@Value("${csvfile.url}") String fileName, @Value("${local}") Locale local) {
+        return new QuestionDaoImpl(fileName, local);
     }
 
     @Bean

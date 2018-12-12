@@ -5,7 +5,6 @@ import org.springframework.context.annotation.ComponentScan;
 import ru.otus.studenttest.service.PersonServiceImpl;
 import ru.otus.studenttest.service.TestingServiceImpl;
 
-
 @ComponentScan
 public class Application {
 
@@ -15,7 +14,6 @@ public class Application {
 
         PersonServiceImpl personService = context.getBean(PersonServiceImpl.class);
         TestingServiceImpl testingService = context.getBean(TestingServiceImpl.class);
-
         personService.fillStudent();
         testingService.beginTesting();
         personService.testResult();
