@@ -25,10 +25,18 @@ public class AppConfig {
     }
 
     @Bean
-    QuestionDao questionDao(MessageSource messageSource, @Value("${local}") Locale local) {
-        local = Locale.getDefault().toString().isEmpty() ? local : Locale.getDefault();
-        String fileName = messageSource.getMessage("csvfile.url", null, local);
-        return new QuestionDaoImpl(fileName);
+    MessageManager messageManager(MessageSource messageSource, @Value("${local}") Locale local) {
+        return new MessageManagerImpl(messageSource, local);
+    }
+
+    @Bean
+    PersonService personService(MessageManager messageManager) {
+        return new PersonServiceImpl(messageManager);
+    }
+
+    @Bean
+    QuestionDao questionDao( @Value("${csvfile.url}") String filename) {
+        return new QuestionDaoImpl(filename);
     }
 
     @Bean
@@ -36,16 +44,11 @@ public class AppConfig {
         return new QuestionServiceImpl(dao);
     }
 
-    @Bean
-    PersonService personService(MessageSource messageSource, @Value("${local}") Locale local) {
-        return new PersonServiceImpl(messageSource, local);
-    }
 
     @Bean
     TestingService testingService(QuestionService questionService,
                                   PersonService personService,
-                                  MessageSource messageSource,
-                                  @Value("${local}") Locale local) {
-        return new TestingServiceImpl(questionService, personService , messageSource, local);
+                                  MessageManager messageManager) {
+        return new TestingServiceImpl(questionService, personService, messageManager);
     }
 }

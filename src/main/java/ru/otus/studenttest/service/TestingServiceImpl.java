@@ -1,24 +1,19 @@
 package ru.otus.studenttest.service;
 
-import org.springframework.context.MessageSource;
 import ru.otus.studenttest.domain.Question;
-
-import java.util.Locale;
 import java.util.Scanner;
-
 public class TestingServiceImpl implements TestingService {
 
-    private final MessageSource messageSource;
-    private final Locale local;
+
+    private final MessageManager messageManager;
     private QuestionService qService;
     private PersonService pService;
 
 
-    public TestingServiceImpl(QuestionService qService, PersonService pService, MessageSource messageSource, Locale local) {
+    public TestingServiceImpl(QuestionService qService, PersonService pService, MessageManager messageManager) {
         this.qService = qService;
         this.pService = pService;
-        this.messageSource = messageSource;
-        this.local = Locale.getDefault().toString().isEmpty() ? local : Locale.getDefault();
+        this.messageManager = messageManager;
     }
 
     @Override
@@ -30,9 +25,9 @@ public class TestingServiceImpl implements TestingService {
 
         for (int i = 0; i < 5; i++) {
             Question question = qService.getOneQuestion(i);
-            System.out.print(messageSource.getMessage("testing.question", null, local));
+            System.out.print(messageManager.getMessage("testing.question"));
             System.out.printf(" №%d: %s %n", i + 1, question.getQuestion());
-            System.out.println(messageSource.getMessage("testing.answers", null, local).concat(":"));
+            System.out.println(messageManager.getMessage("testing.answers").concat(":"));
             int j = 1;
             for (String s : question.getAnswers()) {
                 System.out.printf("%d) %s %n", j, s);
@@ -40,14 +35,14 @@ public class TestingServiceImpl implements TestingService {
             }
 
             do {
-                System.out.println(messageSource.getMessage("user.answer", null, local));
+                System.out.println(messageManager.getMessage("user.answer"));
                 userAnswer = scanner.nextLine().trim();
 
                 if (userAnswer.matches("[-+]?\\d+")) {
                     userAnswerNum = Integer.valueOf(userAnswer);
                 } else {
                     userAnswerNum = -1;
-                    System.out.println(messageSource.getMessage("testing.exception1", null, local));
+                    System.out.println(messageManager.getMessage("testing.exception1"));
                 }
             } while ((userAnswerNum < 1) || (userAnswerNum > 3));
             if (question.getAnswers().get(userAnswerNum - 1).equals(question.getCorrectAnswer()))
