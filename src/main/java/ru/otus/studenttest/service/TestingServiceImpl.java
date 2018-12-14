@@ -1,17 +1,19 @@
 package ru.otus.studenttest.service;
 
 import ru.otus.studenttest.domain.Question;
-
 import java.util.Scanner;
+public class TestingServiceImpl implements TestingService {
 
-public class TestingServiceImpl implements ITestingService {
 
-    private IQuestionService qService;
-    private IPersonService pService;
+    private final MessageManager messageManager;
+    private QuestionService qService;
+    private PersonService pService;
 
-    public TestingServiceImpl(IQuestionService qService, IPersonService pService) {
+
+    public TestingServiceImpl(QuestionService qService, PersonService pService, MessageManager messageManager) {
         this.qService = qService;
         this.pService = pService;
+        this.messageManager = messageManager;
     }
 
     @Override
@@ -23,8 +25,9 @@ public class TestingServiceImpl implements ITestingService {
 
         for (int i = 0; i < 5; i++) {
             Question question = qService.getOneQuestion(i);
-            System.out.printf("Вопрос №%d: %s %n", i + 1, question.getQuestion());
-            printMessage("Варианты ответов: ");
+            System.out.print(messageManager.getMessage("testing.question"));
+            System.out.printf(" №%d: %s %n", i + 1, question.getQuestion());
+            System.out.println(messageManager.getMessage("testing.answers").concat(":"));
             int j = 1;
             for (String s : question.getAnswers()) {
                 System.out.printf("%d) %s %n", j, s);
@@ -32,23 +35,19 @@ public class TestingServiceImpl implements ITestingService {
             }
 
             do {
-                printMessage("Введите номер ответа: ");
+                System.out.println(messageManager.getMessage("user.answer"));
                 userAnswer = scanner.nextLine().trim();
 
                 if (userAnswer.matches("[-+]?\\d+")) {
                     userAnswerNum = Integer.valueOf(userAnswer);
                 } else {
                     userAnswerNum = -1;
-                    printMessage("Необходимо ввести число от 1 до 3");
+                    System.out.println(messageManager.getMessage("testing.exception1"));
                 }
-            } while ((userAnswerNum < 1) || (userAnswerNum > 4));
+            } while ((userAnswerNum < 1) || (userAnswerNum > 3));
             if (question.getAnswers().get(userAnswerNum - 1).equals(question.getCorrectAnswer()))
                 countCorrectAnswer++;
         }
         pService.getStudent().setCountCorrectAnswer(countCorrectAnswer);
-    }
-
-    private void printMessage(String msg) {
-        System.out.println(msg);
     }
 }

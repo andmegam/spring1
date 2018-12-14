@@ -3,6 +3,6 @@ package ru.otus.studenttest.dao;
 import ru.otus.studenttest.domain.Question;
 
 
-public interface IQuestionDao {
+public interface QuestionDao {
     Question findOneQuestion(int index);
 }

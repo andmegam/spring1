@@ -1,13 +1,13 @@
 package ru.otus.studenttest.dao;
 
-import au.com.bytecode.opencsv.CSVReader;
 import ru.otus.studenttest.domain.Question;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class QuestionDaoImpl implements IQuestionDao {
+public class QuestionDaoImpl implements QuestionDao {
 
     private final String fileName;
 
@@ -16,20 +16,24 @@ public class QuestionDaoImpl implements IQuestionDao {
     }
 
     @Override
-    public Question findOneQuestion(int index){
+    public Question findOneQuestion(int index) {
         String question = "";
         String correctAnswer = "";
         ArrayList<String> answers = new ArrayList<>();
 
-        File file = new File("src/main/resources/"+fileName);
-        try (CSVReader csvReader = new CSVReader(new FileReader(file), ';', '"', 0)) {
-            String[] nextLine;
-            int i = 0;
-            while ((nextLine = csvReader.readNext()) != null) {
+        InputStream resourceAsStream = getClass().getClassLoader().getResourceAsStream(fileName);
+        int i = 0;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))) {
+            for (String line; (line = reader.readLine()) != null; ) {
+                String[] questionParts = line.split(";");
+                if (questionParts.length < 3) {
+                    continue;
+                }
                 if (i == index) {
-                    question = nextLine[0];
-                    correctAnswer = nextLine[1];
-                    answers.addAll(Arrays.asList(nextLine[2], nextLine[3], nextLine[4]));
+                    question = questionParts[0];
+                    correctAnswer = questionParts[1];
+                    answers.addAll(Arrays.asList(questionParts[2], questionParts[3], questionParts[4]));
+                    break;
                 }
                 i++;
             }

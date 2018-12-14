@@ -1,26 +1,37 @@
 package ru.otus.studenttest.dao;
 
-import org.junit.Before;
-import org.junit.Test;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import ru.otus.studenttest.domain.Question;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 public class QuestionDaoImplTest {
-    private final String fileName= "questions.csv";
+    private static final String PATH_TO_PROPERTIES = "src/test/resources/application.properties";
     private QuestionDaoImpl questionDao;
+    private Properties prop = new Properties();
 
+    @BeforeEach
+    public void setUp() {
 
-    @Before
-    public void beforeTest() {
-        questionDao = new QuestionDaoImpl(fileName);
+        try (FileInputStream fileInputStream = new FileInputStream(PATH_TO_PROPERTIES)) {
+            prop.load(fileInputStream);
+            String fileName = prop.getProperty("csvfile.url");
+            questionDao = new QuestionDaoImpl(fileName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
     public void findOneQuestionTest() {
         Question question = questionDao.findOneQuestion(0);
-        assertThat("Какой размер переменной int?", is(question.getQuestion()));
-        assertThat("32 bit", is(question.getCorrectAnswer()));
+        assertEquals("Какой размер переменной int?", question.getQuestion());
     }
 }
